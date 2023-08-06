@@ -1,0 +1,35 @@
+version: '3.9'
+services:
+  db:
+    image: mysql
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: mypassword
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassword
+      MYSQL_DATABASE: 65130496_final
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql  # Mount the init.sql script
+    networks:
+      - internal
+
+  web:
+    build: ./app
+    container_name: web
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "8000:80"
+    volumes:
+      - ./app:/var/www/html
+    networks:
+      - internal
+
+networks:
+  internal:
+
+volumes:
+  db_data:
